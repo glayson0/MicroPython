@@ -60,9 +60,10 @@ print("Pressione Botão A para vermelho, Botão B para azul.")
 
 while True:
     if not botao_a.value():  # Botão A pressionado
-        acender_proximo((100, 0, 0), "Vermelho")  # LED vermelho
+        acender_proximo((50, 0, 0), "Vermelho")  # LED vermelho
         sleep(0.2)  # Debounce para evitar múltiplos cliques rápidos
 
     if not botao_b.value():  # Botão B pressionado
-        acender_proximo((0, 0, 100), "Azul")  # LED azul
+        acender_proximo((0, 0, 50), "Azul")  # LED azul
         sleep(0.2) 
+
