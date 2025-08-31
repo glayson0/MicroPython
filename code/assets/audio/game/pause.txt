@@ -1,0 +1,3 @@
+# Som de pausa
+# Tempo: 120 BPM
+REST:8 REST:16 REST:4

@@ -1,0 +1,3 @@
+# Click de botão
+# Tempo: 120 BPM
+REST:16

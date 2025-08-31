@@ -1,0 +1,3 @@
+# Victory
+# Tempo: 120 BPM
+NOTE_C5:8 NOTE_E5:8 NOTE_G5:8 NOTE_C6:2

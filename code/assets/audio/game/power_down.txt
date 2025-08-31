@@ -1,0 +1,3 @@
+# Power down
+# Tempo: 120 BPM
+NOTE_A4:16 NOTE_E4:16 REST:16 NOTE_A3:16

@@ -1,10 +1,8 @@
 from machine import PWM, Pin
 import time
+import re
 # Importa apenas as constantes necessárias para o formato Zelda
 from music_notes import *
-
-# Pino padrão do buzzer
-BUZZER_PIN = 21
 
 # Volume global do sistema (0.0 a 1.0)
 GLOBAL_VOLUME = 0.5
@@ -17,9 +15,6 @@ class Buzzer:
         self._is_playing = False
         self._current_volume = 0.0
         self._fade_steps = 20
-        
-        # Caminho base para os arquivos de áudio
-        self.audio_path = "/home/gnbo/bitdoglab/MicroPython/assets/audio"
         
     def set_volume(self, volume):
         """Define o volume (0.0 a 1.0)"""
@@ -96,59 +91,116 @@ class Buzzer:
         # Fade out
         self.fade_out(fade_out_time)
     
-    def play_audio_file(self, file_path, volume=None):
-        """Toca um arquivo de áudio (formato FREQ:DURATION:VOLUME ou NOTA:DURATION)"""
-        try:
-            with open(file_path, 'r') as f:
-                content = f.read().strip()
-            
-            # Remove comentários e linhas vazias
-            lines = []
-            for line in content.split('\n'):
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    lines.append(line)
-            
-            # Processa cada linha
-            for line in lines:
-                parts = line.split(':')
-                if len(parts) < 2:
-                    continue
-                
-                freq_or_note = parts[0]
-                duration_ms = int(parts[1])
-                file_volume = float(parts[2]) if len(parts) > 2 else None
-                
-                # Converte nota para frequência se necessário
-                if freq_or_note.isdigit() or freq_or_note == "0":
-                    freq = int(freq_or_note)
-                else:
-                    # Tenta buscar pela constante global (formato NOTE_*)
-                    freq = globals().get(f"NOTE_{freq_or_note}", 0)
-                    if freq == 0 and freq_or_note == "REST":
-                        freq = REST
-                
-                # Usa volume do arquivo ou padrão
-                use_volume = file_volume if file_volume is not None else volume
-                
-                # Toca a nota
-                if freq > 0:
-                    self.play_note(freq, duration_ms / 1000.0, use_volume)
-                else:
-                    time.sleep(duration_ms / 1000.0)  # Silêncio
-                    
-        except Exception as e:
-            print(f"Erro ao carregar arquivo de áudio: {e}")
-    
     def stop(self):
         """Para o som imediatamente"""
         self._set_pwm_volume(0)
         self._is_playing = False
 
-# Instância global do buzzer
-buzzer = Buzzer(BUZZER_PIN)
+    def play_audio_file(self, file_path, volume=None):
+        """Toca um arquivo de áudio (formato Arduino/Zelda)"""
+        try:
+            with open(file_path, 'r') as f:
+                content = f.read().strip()
+            
+            self._play_arduino_format(content, volume)
+                    
+        except Exception as e:
+            print(f"Erro ao carregar arquivo de áudio: {e}")
+    
+    def _play_arduino_format(self, content, volume):
+        """Toca formato Arduino (NOTE_X:duration com BPM)"""
+        # Extrai o tempo do arquivo
+        tempo_match = re.search(r'# Tempo: (\d+) BPM', content)
+        tempo = int(tempo_match.group(1)) if tempo_match else 120
+        
+        # Remove comentários e linhas vazias
+        lines = []
+        for line in content.split('\n'):
+            line = line.strip()
+            if line and not line.startswith('#'):
+                lines.append(line)
+        
+        # Junta todas as linhas e separa por espaços
+        melody_text = ' '.join(lines)
+        notes_data = melody_text.split()
+        
+        # Calcula duração de uma nota inteira em milissegundos
+        wholenote = (60000 * 4) // tempo
+        
+        for note_str in notes_data:
+            if ':' not in note_str:
+                continue
+                
+            try:
+                note_name, duration_str = note_str.split(':')
+                duration_val = int(duration_str)
+                
+                # Obtém a frequência da nota
+                freq = globals().get(note_name, 0)
+                
+                # Calcula duração da nota
+                if duration_val > 0:
+                    # Nota normal
+                    note_duration = wholenote // duration_val
+                else:
+                    # Nota pontuada (duração negativa)
+                    note_duration = wholenote // abs(duration_val)
+                    note_duration = int(note_duration * 1.5)  # Aumenta em 50%
+                
+                # Converte para segundos
+                duration_sec = note_duration / 1000.0
+                
+                # Toca a nota (90% da duração, 10% pausa)
+                play_duration = duration_sec * 0.9
+                pause_duration = duration_sec * 0.1
+                
+                if freq > 0:
+                    self.play_note(freq, play_duration, volume)
+                else:
+                    time.sleep(play_duration)  # Silêncio
+                
+                time.sleep(pause_duration)  # Pausa entre notas
+                
+            except ValueError as e:
+                print(f"Erro ao processar nota '{note_str}': {e}")
+                continue
 
-# Funções globais
+# Função global genérica para tocar qualquer arquivo de áudio
+def play_audio(pin, file_path, volume=0.3, loop=False):
+    """
+    Função global para tocar qualquer arquivo de áudio no buzzer.
+    
+    Args:
+        pin (int): Número do pino do buzzer
+        file_path (str): Caminho para o arquivo de áudio (.txt)
+        volume (float): Volume de 0.0 a 1.0 (padrão: 0.3)
+        loop (bool): Se True, toca em loop contínuo (padrão: False)
+    
+    Formato do arquivo .txt:
+        # Comentários começam com #
+        # Tempo: 120 BPM (opcional, padrão é 120)
+        NOTE_C4:4 NOTE_D4:4 NOTE_E4:2 REST:4
+        NOTE_F4:8 NOTE_G4:8 NOTE_A4:1
+        
+    Onde:
+        - NOTE_XXX: Nota musical (ex: NOTE_C4, NOTE_A4, etc.)
+        - REST: Silêncio
+        - :X: Duração da nota (1=semibreve, 2=mínima, 4=semínima, 8=colcheia, etc.)
+        - Duração negativa (-4) = nota pontuada (50% mais longa)
+    """
+    buzzer = Buzzer(pin, volume)
+    
+    try:
+        while True:
+            buzzer.play_audio_file(file_path, volume)
+            if not loop:
+                break
+    except KeyboardInterrupt:
+        print("Reprodução interrompida pelo usuário")
+    finally:
+        buzzer.stop()
+
+# Funções globais para controle de volume
 def set_global_volume(volume):
     """Define o volume global do sistema"""
     global GLOBAL_VOLUME
@@ -161,56 +213,3 @@ def get_global_volume():
 def mute_all():
     """Silencia o sistema"""
     set_global_volume(0.0)
-    buzzer.stop()
-
-# Teste
-if __name__ == "__main__":    
-    print("=== Teste Buzzer com Sistema de Arquivos ===")
-    
-    print("1. Nota simples")
-    buzzer.play_note(440, 0.3)
-    time.sleep(0.5)
-    
-    print("2. Som de UI - Click")
-    buzzer.play_audio_file(f"{buzzer.audio_path}/ui/click.txt")
-    time.sleep(0.3)
-    
-    print("3. Som de jogo - Coin collect")
-    buzzer.play_audio_file(f"{buzzer.audio_path}/game/coin_collect.txt")
-    time.sleep(0.5)
-    
-    print("4. Efeito sonoro - R2D2")
-    buzzer.play_audio_file(f"{buzzer.audio_path}/sfx/r2d2.txt")
-    time.sleep(1)
-    
-    print("5. Testando volume global")
-    print(f"Volume global atual: {get_global_volume()}")
-    set_global_volume(0.3)
-    print(f"Volume global alterado para: {get_global_volume()}")
-    buzzer.play_audio_file(f"{buzzer.audio_path}/ui/success.txt")
-    time.sleep(0.5)
-    
-    print("6. Música - Escala")
-    try:
-        buzzer.play_audio_file(f"{buzzer.audio_path}/music/escala.txt")
-    except Exception as e:
-        print(f"Erro ao tocar música: {e}")
-    
-    print("7. Diversos sons de jogo:")
-    game_sounds = ["pause", "resume", "power_up", "victory"]
-    for sound in game_sounds:
-        print(f"Tocando: {sound}")
-        buzzer.play_audio_file(f"{buzzer.audio_path}/game/{sound}.txt")
-        time.sleep(0.3)
-    
-    print("8. Testando fade in/out:")
-    print("Nota com fade in e fade out")
-    buzzer.play_note_with_fade(440, duration=3.0, fade_in_time=0.5, fade_out_time=0.5)
-    time.sleep(0.5)
-    
-    print("Fade in manual + fade out")
-    buzzer.fade_in(880, duration=1.0)
-    time.sleep(1.0)
-    buzzer.fade_out(duration=1.0)
-    
-    print("Teste concluído!")

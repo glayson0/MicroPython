@@ -1,0 +1,3 @@
+# Som do R2D2
+# Tempo: 120 BPM
+REST:16 REST:16 REST:8 REST:16 REST:8

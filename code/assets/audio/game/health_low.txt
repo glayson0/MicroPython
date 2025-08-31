@@ -1,0 +1,3 @@
+# Health baixa (alerta)
+# Tempo: 120 BPM
+NOTE_G3:16 REST:16 NOTE_F3:16

@@ -1,0 +1,3 @@
+# Blip rápido
+# Tempo: 120 BPM
+REST:16

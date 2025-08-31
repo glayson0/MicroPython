@@ -1,0 +1,3 @@
+# Tick do countdown
+# Tempo: 120 BPM
+REST:16

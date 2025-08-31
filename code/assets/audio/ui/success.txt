@@ -1,0 +1,3 @@
+# Som de sucesso
+# Tempo: 120 BPM
+REST:16 REST:16 REST:8

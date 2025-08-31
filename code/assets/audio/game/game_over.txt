@@ -1,0 +1,3 @@
+# Game over
+# Tempo: 120 BPM
+NOTE_A4:8 REST:8 NOTE_G4:8 REST:4
