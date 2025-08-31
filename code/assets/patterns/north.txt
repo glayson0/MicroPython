@@ -1,0 +1,9 @@
+# Padrão: Seta Norte (para cima)
+# Formato: 5x5 matriz
+# X = LED aceso, . = LED apagado
+
+..X..
+.XXX.
+XXXXX
+..X..
+..X..

@@ -1,0 +1,9 @@
+# Padrão: Quadrado completo
+# Formato: 5x5 matriz
+# X = LED aceso, . = LED apagado
+
+XXXXX
+X...X
+X...X
+X...X
+XXXXX

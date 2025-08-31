@@ -1,0 +1,16 @@
+# Padrão: Arco-íris horizontal
+# Formato: 5x5 matriz com cores
+# 0 = LED apagado, 1-9 = cores diferentes
+
+11111
+22222
+33333
+44444
+55555
+
+# Cores:
+# 1: (255, 0, 0)     # Vermelho
+# 2: (255, 127, 0)   # Laranja
+# 3: (255, 255, 0)   # Amarelo
+# 4: (0, 255, 0)     # Verde
+# 5: (0, 0, 255)     # Azul

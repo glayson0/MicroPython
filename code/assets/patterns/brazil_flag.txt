@@ -1,0 +1,14 @@
+# Padrão: Bandeira do Brasil (simplificada)
+# Formato: 5x5 matriz com cores
+# 0 = LED apagado, 1-9 = cores diferentes
+
+11111
+12221
+12321
+12221
+11111
+
+# Cores:
+# 1: (0, 255, 0)     # Verde
+# 2: (255, 255, 0)   # Amarelo  
+# 3: (0, 0, 255)     # Azul

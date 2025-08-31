@@ -1,0 +1,14 @@
+# Padrão: Semáforo vertical
+# Formato: 5x5 matriz com cores
+# 0 = LED apagado, 1-9 = cores diferentes
+
+..1..
+.111.
+..2..
+.222.
+..3..
+
+# Cores:
+# 1: (255, 0, 0)     # Vermelho (pare)
+# 2: (255, 255, 0)   # Amarelo (atenção)
+# 3: (0, 255, 0)     # Verde (siga)

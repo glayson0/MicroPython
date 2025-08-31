@@ -1,0 +1,14 @@
+# Padrão: Alvo colorido
+# Formato: 5x5 matriz com cores
+# 0 = LED apagado, 1-9 = cores diferentes
+
+11111
+12221
+12321
+12221
+11111
+
+# Cores:
+# 1: (255, 0, 0)     # Vermelho (anel externo)
+# 2: (255, 255, 0)   # Amarelo (anel médio)
+# 3: (255, 255, 255) # Branco (centro)

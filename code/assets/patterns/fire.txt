@@ -1,0 +1,14 @@
+# Padrão: Fogo/Chama
+# Formato: 5x5 matriz com cores
+# 0 = LED apagado, 1-9 = cores diferentes
+
+..1..
+.212.
+21312
+32123
+32223
+
+# Cores:
+# 1: (255, 255, 0)   # Amarelo (centro da chama)
+# 2: (255, 127, 0)   # Laranja (meio)
+# 3: (255, 0, 0)     # Vermelho (extremo)

@@ -1,0 +1,11 @@
+# Padrão: Coração
+# Formato: 5x5 matriz
+# X = LED aceso, . = LED apagado
+# Linhas representam Y (0-4 de cima para baixo)
+# Colunas representam X (0-4 da esquerda para direita)
+
+..X..
+.XXX.
+XXXXX
+XXXXX
+.XXX.

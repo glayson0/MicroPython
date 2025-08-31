@@ -1,3 +1,0 @@
-# Coletar moeda
-# Tempo: 120 BPM
-NOTE_C5:16 NOTE_E5:16 NOTE_G5:8

@@ -1,0 +1,14 @@
+# Padrão: Grade RGB
+# Formato: 5x5 matriz com cores
+# 0 = LED apagado, 1-9 = cores diferentes
+
+12312
+23123
+31231
+12312
+23123
+
+# Cores:
+# 1: (255, 0, 0)     # Vermelho
+# 2: (0, 255, 0)     # Verde  
+# 3: (0, 0, 255)     # Azul
