@@ -16,6 +16,7 @@ MAGENTA = (255, 0, 255)
 CYAN = (0, 255, 255)
 WHITE = (255, 255, 255)
 colors = [RED, GREEN, BLUE, YELLOW, MAGENTA, CYAN, WHITE]
+GLOBAL_BRIGHTNESS = 0.1
 
 class LEDMatrix:
     def __init__(self, pin: int, size: int):
@@ -77,12 +78,12 @@ if __name__ == "__main__":
     for y in range(5):
         for x in range(5):
             m.clear()
-            m.set_led((x, y), RED, 0.01)
-            sleep(0.2)
+            m.set_led((x, y), WHITE, GLOBAL_BRIGHTNESS)
             m.draw()
+            sleep(0.2)
 
     for pattern in m.patterns:
         m.clear()
-        m.set_pattern(m.patterns[pattern], WHITE, 1)
+        m.set_pattern(m.patterns[pattern], WHITE, GLOBAL_BRIGHTNESS)
         m.draw()
         sleep(1)
