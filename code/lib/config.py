@@ -6,8 +6,9 @@ class PinConfig:
     """Configurações de pinos GPIO do BitDogLab V7"""
     
     # DISPLAY OLED (I2C1)
-    OLED_SDA = 2        # GPIO2 (I2C1)
-    OLED_SCL = 3        # GPIO3 (I2C1)
+    # IMPORTANTE: Exemplos funcionais usam GPIO14 (SDA) e GPIO15 (SCL)
+    OLED_SDA = 14       # GPIO14 (SDA) - confirmado pelos exemplos funcionais
+    OLED_SCL = 15       # GPIO15 (SCL) - confirmado pelos exemplos funcionais
     OLED_ADDRESS = 0x3C
     
     # BOTÕES (2 BOTÕES + JOYSTICK BUTTON)
