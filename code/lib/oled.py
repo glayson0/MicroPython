@@ -72,15 +72,28 @@ class OLEDDisplay:
         self.height = height if height is not None else 64
         self.line_height = line_height if line_height is not None else 8
         
-        # Usa pinos dos exemplos funcionais por padrão
-        self.sda_pin = sda if sda is not None else I2C_SDA_PIN  # GPIO14
-        self.scl_pin = scl if scl is not None else I2C_SCL_PIN  # GPIO15
+        # Usa pinos dos exemplos funcionais por padrão, mas prioriza config.py
+        if sda is not None:
+            self.sda_pin = sda
+        elif hasattr(PINS, 'OLED_SDA'):
+            self.sda_pin = PINS.OLED_SDA
+        else:
+            self.sda_pin = I2C_SDA_PIN  # GPIO14 fallback
+            
+        if scl is not None:
+            self.scl_pin = scl
+        elif hasattr(PINS, 'OLED_SCL'):
+            self.scl_pin = PINS.OLED_SCL
+        else:
+            self.scl_pin = I2C_SCL_PIN  # GPIO15 fallback
+            
         self.i2c_address = address if address is not None else 0x3C
         
         # Flag para controle
         self.is_present = False
         self.oled = None
-        self._debug = SOFTWARE.DEBUG_MODE if hasattr(SOFTWARE, 'DEBUG_MODE') else False
+        # Força debug durante inicialização para diagnosticar problemas
+        self._debug = True  # Sempre ativo para diagnóstico
         
         # Inicializa display
         self._init_display()
@@ -104,13 +117,27 @@ class OLEDDisplay:
             self.oled = SSD1306_I2C(self.width, self.height, i2c)
             self.is_present = True
             
-            # Teste inicial - igual aos exemplos
+            # Teste inicial mais completo
             self.oled.fill(0)
             self.oled.show()
+            
+            # Teste visual robusto
+            self.oled.text("BitDogLab V7", 15, 15)
+            self.oled.text("OLED OK!", 30, 30)
+            
+            # Adiciona bordas para garantir visibilidade
+            self.oled.rect(0, 0, 128, 64, 1)
+            self.oled.show()
+            
+            # Pausa para garantir que aparece
+            import time
+            time.sleep(0.5)
             
             if self._debug:
                 print(f'OLED: Display funcionando {self.width}x{self.height}')
                 print(f'OLED: Padrão dos exemplos - SDA={self.sda_pin}, SCL={self.scl_pin}')
+                print('OLED: Teste visual com bordas exibido')
+                print('OLED: Se não aparecer nada, verifique hardware físico')
                 
         except Exception as e:
             self.is_present = False
@@ -165,6 +192,9 @@ class OLEDDisplay:
             valign: Alinhamento vertical 'top', 'middle', 'bottom'
             global_align: Alinhamento padrão 'left', 'center', 'right'
         """
+        if self._debug:
+            print(f"OLED: draw_lines chamado - {len(lines)} linhas")
+            
         self.clear()
         
         # Converte strings simples para formato dict
@@ -192,9 +222,15 @@ class OLEDDisplay:
             align = line_data.get('align', global_align)
             y = y_offset + i * self.line_height
             
+            if self._debug:
+                print(f"OLED: linha {i}: '{text}' em y={y}")
+            
             self.draw_text(text, 0, y, align)
 
         self.show()
+        
+        if self._debug:
+            print("OLED: show() executado")
     
     def fill(self, color):
         """Preenche a tela com cor (0=preto, 1=branco)"""
