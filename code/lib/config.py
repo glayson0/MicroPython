@@ -10,12 +10,11 @@ class PinConfig:
     OLED_SCL = 3        # GPIO3 (I2C1)
     OLED_ADDRESS = 0x3C
     
-    # BOTÕES (3 BOTÕES + JOYSTICK BUTTON)
-    BUTTON_A = 10       # GPIO10 (Botão A, pull-up interno)
-    BUTTON_B = 5        # GPIO5  (Botão B, pull-up interno)
-    BUTTON_C = 6        # GPIO6  (Botão C, pull-up interno)
+    # BOTÕES (2 BOTÕES + JOYSTICK BUTTON)
+    BUTTON_A = 5        # GPIO5  (Botão A, pull-up interno)
+    BUTTON_B = 6        # GPIO6  (Botão B, pull-up interno)
     JOYSTICK_BUTTON = 22 # GPIO22 (Joystick SW, pull-up interno)
-    
+        
     # JOYSTICK ANALÓGICO KY023
     JOYSTICK_VRX = 27   # GPIO27 (VRx)
     JOYSTICK_VRY = 26   # GPIO26 (VRy)
