@@ -52,7 +52,7 @@ FUCHSIA = (255, 0, 255)
 COLORS = [RED, GREEN, BLUE, YELLOW, MAGENTA, CYAN, WHITE, ORANGE, PURPLE, PINK]
 
 # Brilho global padrão
-DEFAULT_BRIGHTNESS = 0.15
+DEFAULT_BRIGHTNESS = 0.05
 
 # =============================================================================
 # CLASSE BASE LED - IMPLEMENTA DRY
@@ -222,7 +222,7 @@ class LEDMatrix(LED):
         if self._debug:
             print(f"LEDMatrix: GPIO{self.pin_number}, {self.width}x{self.height} ({self.num_leds} LEDs)")
 
-    def set_pattern(self, pattern_name, color=WHITE, brightness=None):
+    def set_pattern(self, pattern_name, color=WHITE, brightness=DEFAULT_BRIGHTNESS):
         """
         Define um padrão na matriz a partir de um arquivo em assets/patterns/
         
@@ -338,7 +338,7 @@ class LEDMatrix(LED):
             if (line and 
                 not line.startswith('#') and 
                 all(c in '.0123456789Xx ' for c in line) and
-                any(c in '123456789Xx' for c in line)):  # Deve ter pelo menos um LED
+                len(line) <= self.width):  # Linha deve ter tamanho válido para a matriz
                 
                 if self._debug:
                     print(f"Processando linha padrão Y={pattern_y}: '{line}'")
@@ -377,18 +377,21 @@ class LEDMatrix(LED):
                 print(f"Coordenada ({x}, {y}) fora dos limites da matriz {self.width}x{self.height}")
             return
 
+        # CORREÇÃO: Inverte Y para compatibilidade com BitDogLab (Y=0 fica embaixo fisicamente)
+        y_inverted = self.height - 1 - y
+
         # Linearização em serpentina (padrão BitDogLab)
-        if y % 2 == 0:  # linha par (esquerda -> direita)
-            index = y * self.width + x
+        if y_inverted % 2 == 0:  # linha par (esquerda -> direita)
+            index = y_inverted * self.width + x
         else:           # linha ímpar (direita -> esquerda)
-            index = y * self.width + (self.width - 1 - x)
+            index = y_inverted * self.width + (self.width - 1 - x)
 
         # Aplica cor com brilho (usando método da classe base)
         adjusted_color = self._apply_brightness(color, brightness)
         self.np[index] = adjusted_color
         
         if self._debug:
-            print(f"LED ({x}, {y}) -> index {index} -> cor {adjusted_color}")
+            print(f"LED ({x}, {y}) -> Y_inv={y_inverted} -> index {index} -> cor {adjusted_color}")
 
     def set_color(self, color, brightness=None):
         """Define todos os LEDs para a mesma cor (implementa método abstrato)"""

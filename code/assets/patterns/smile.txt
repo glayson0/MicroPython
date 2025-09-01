@@ -2,8 +2,8 @@
 # Formato: 5x5 matriz
 # X = LED aceso, . = LED apagado
 
-.XXX.
-X...X
-X.X.X
+.X.X.
+.X.X.
+.....
 X...X
 .XXX.

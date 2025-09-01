@@ -4,12 +4,10 @@
 # Mapeamento de cores: 1=vermelho, 2=rosa, 3=branco
 
 .1.1.
-12321
-12321
-.121.
-..1..
+.1.1.
+.1.1.
+.1.1.
+.1.1.
 
 # Cores:
 # 1: (255, 0, 0)     # Vermelho
-# 2: (255, 100, 150) # Rosa
-# 3: (255, 255, 255) # Branco

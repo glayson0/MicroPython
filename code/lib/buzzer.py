@@ -128,7 +128,7 @@ REST = 0
 # =============================================================================
 
 # Volume global do sistema (0.0 a 1.0)
-GLOBAL_VOLUME = 0.5
+GLOBAL_VOLUME = 0.01
 
 class Buzzer:
     """

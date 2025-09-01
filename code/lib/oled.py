@@ -93,7 +93,7 @@ class OLEDDisplay:
         self.is_present = False
         self.oled = None
         # Força debug durante inicialização para diagnosticar problemas
-        self._debug = True  # Sempre ativo para diagnóstico
+        self._debug = False  # Sempre ativo para diagnóstico
         
         # Inicializa display
         self._init_display()
@@ -263,6 +263,60 @@ class OLEDDisplay:
         elif self._debug:
             action = "fill_rect" if fill else "rect"
             print(f"OLED: {action}({x}, {y}, {w}, {h}, {color}) - simulado")
+    
+    def invert_line(self, line_number):
+        """
+        Inverte as cores de uma linha inteira
+        
+        Args:
+            line_number: Número da linha (0-7 para display 64px de altura)
+        """
+        if not self.is_present or self.oled is None:
+            if self._debug:
+                print(f"OLED: invert_line({line_number}) - simulado")
+            return
+        
+        # Calcula posição Y da linha
+        y_start = line_number * self.line_height
+        y_end = min(y_start + self.line_height, self.height)
+        
+        # Inverte cada pixel da linha
+        for y in range(y_start, y_end):
+            for x in range(self.width):
+                # Lê pixel atual e inverte (0->1, 1->0)
+                current_pixel = self.oled.pixel(x, y)
+                inverted_pixel = 1 - current_pixel
+                self.oled.pixel(x, y, inverted_pixel)
+        
+        if self._debug:
+            print(f"OLED: Linha {line_number} invertida (Y={y_start}-{y_end-1})")
+    
+    def invert_area(self, x, y, width, height):
+        """
+        Inverte as cores de uma área retangular
+        
+        Args:
+            x, y: Posição inicial
+            width, height: Dimensões da área
+        """
+        if not self.is_present or self.oled is None:
+            if self._debug:
+                print(f"OLED: invert_area({x}, {y}, {width}, {height}) - simulado")
+            return
+        
+        # Limita área ao display
+        end_x = min(x + width, self.width)
+        end_y = min(y + height, self.height)
+        
+        # Inverte cada pixel da área
+        for py in range(y, end_y):
+            for px in range(x, end_x):
+                current_pixel = self.oled.pixel(px, py)
+                inverted_pixel = 1 - current_pixel
+                self.oled.pixel(px, py, inverted_pixel)
+        
+        if self._debug:
+            print(f"OLED: Área invertida ({x},{y}) até ({end_x-1},{end_y-1})")
     
     def get_info(self):
         """Retorna informações do display"""

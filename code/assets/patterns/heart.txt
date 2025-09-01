@@ -4,8 +4,8 @@
 # Linhas representam Y (0-4 de cima para baixo)
 # Colunas representam X (0-4 da esquerda para direita)
 
+.X.X.
+XXXXX
+XXXXX
+.XXX.
 ..X..
-.XXX.
-XXXXX
-XXXXX
-.XXX.
