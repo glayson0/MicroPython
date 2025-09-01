@@ -1,5 +1,5 @@
 # /
-# Tempo: 140 BPM
+# Tempo: 350 BPM
 # Convertido do Arduino Songs
 # Formato: NOTA:DURAÇÃO
 
